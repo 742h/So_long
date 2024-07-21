@@ -5,49 +5,85 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: hassaleh <hassaleh@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/28 15:25:03 by hassaleh          #+#    #+#             */
-/*   Updated: 2024/05/21 13:48:40 by hassaleh         ###   ########.fr       */
+/*   Created: 2024/07/01 20:02:16 by hassaleh          #+#    #+#             */
+/*   Updated: 2024/07/01 23:15:55 by hassaleh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SO_LONG_H
 # define SO_LONG_H
-
-# include "mlx/mlx.h"
-# include "./libft/libft.h"
-# include "./gnl/get_next_line.h"
 # include <unistd.h>
 # include <stdlib.h>
 # include <fcntl.h>
-# include <limits.h>
-# include <stdio.h>
+# include "utils/gnl/get_next_line.h"
+# include "utils/ft_printf/ft_printf.h"
+# include "mlx/mlx.h"
 
+# define WALL "./img/wall.xpm"
+# define PLAYER "./img/me.xpm"
+# define SPACE "./img/ggrass.xpm"
+# define COLLECTIBLES "./img/Heart.xpm"
+# define EXIT "./img/portal.xpm"
+# define PLAYEREXIT "./img/exit_exit.xpm"
 
-typedef struct	s_vars {
-	char	**map;
-	char	**map_copy;
-	void	*connection;
-	void	*window;
-	void	*wall;
-	void	*player_left;
-	void	*player_right;
-	int		player_direction;
-	void	*grass;
-	void	*coins;
-	void	*exit;
-	int		number_of_coins;
-	int		steps;
-	int		width;
-	int		height;
-	int		pixel;
-	int		is_valid;
-	int		player_height;
-	int		player_width;
-	int		player_on_exit;
-}				t_vars;
+typedef struct s_game
+{
+	int		fd;
+	int		linelength;
+	int		totallines;
+	int		y;
+	int		j;
+	int		i;
+	int		moves;
+	int		size_x;
+	int		size_y;
+	int		p_x;
+	int		p_y;
+	int		e_x;
+	int		e_y;
+	int		valid[264][264];
+	int		is_exit;
+	int		is_coin;
+	int		is_player;
+	int		coins;
+	int		markexit;
+	int		*mlx_window;
+	char	*map;
+	char	**mapcheck;
+	char	*mlx;
+	char	*temp;
+	void	*img;
+}	t_game;
 
-
-int	close_as(int keycode, t_vars *vars);
-
+char	**ft_split(char *s, char c);
+void	free_and_exit(t_game *game);
+void	close_window(t_game *game);
+char	*readmap(t_game *game, char *file);
+void	mapsize(t_game *game);
+void	wallchecker_x(t_game *game);
+void	wallchecker_y(t_game *game);
+void	coincount(t_game *game);
+void	charactercheck(t_game *game);
+void	draw_img(t_game *game, char *path, int x, int y);
+void	pick_img(t_game *game, char c, int x, int y);
+void	draw_map(t_game *game);
+void	movescount(t_game *game, int x, int y, int flag);
+void	win(t_game *game);
+void	mark_exit(t_game *game, int x, int y);
+int		moves(t_game *game, int x, int y);
+int		keyhook(int keycode, t_game *game);
+void	check_mapfile_size(t_game *game);
+void	find_player(t_game *game);
+void	find_exit(t_game *game);
+int		validcheck(t_game *game, int x, int y);
+void	dfs(t_game *game, int x, int y);
+int		mouse_event(t_game *game);
+void	validchecker(t_game *game);
+void	windowmaker(t_game *game);
+void	mainchecker(t_game *game);
+void	hashmaker(t_game *game);
+int		bercheck(char *av);
+void	free_split(char **s);
+void	if_null_exit(char *file);
 
 #endif

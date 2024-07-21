@@ -1,35 +1,43 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: hassaleh <hassaleh@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/07/01 20:12:52 by hassaleh          #+#    #+#              #
+#    Updated: 2024/07/01 20:12:54 by hassaleh         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-SRCS = main.c gnl/get_next_line.c gnl/get_next_line_utils.c
+SRC	=	so_long.c parsing1.c parsing2.c keyhooks.c dfs.c \
+		utils/gnl/get_next_line.c utils/gnl/get_next_line_utils.c \
+		utils/utils.c utils/utils2.c utils/ft_printf/ft_printf.c \
+		utils/ft_printf/libftprintf.c \
+		utils/ft_printf/libftprintf2.c
 
-LIBFT = libft/libft.a
-CFLAGS = -Wall -Wextra -Werror -g3
-OBJECTS = ${SRCS:.c=.o}
+OBJ	= $(SRC:.c=.o)
 
-MLX = mlx/libmlx.a
+CFLAGS =  -fsanitize=address -Wall -Wextra -Werror  -g3
+
 NAME = so_long
 
-all: $(NAME)
+$(NAME): $(OBJ)
+		$(MAKE) -C MLX
+		cc -W -W -W $(OBJ) -Lmlx -lmlx -framework OpenGL -framework AppKit -o $(NAME)
 
-$(NAME): $(OBJECTS) $(LIBFT) $(MLX) 
-	@$(CC) $(CFLAGS) -fsanitize=address -g3 $(OBJECTS) $(LIBFT) -Imlx -lm -Lmlx -lmlx -framework OpenGL -framework AppKit -o $(NAME)
+%.o: %.c
+	$(CC) -Wall -Wextra -Werror -D BUFFER_SIZE=1 -Imlx -c $< -o $@
 
-$(MLX):
-	@make -C mlx
+all:	$(NAME)
 
-$(LIBFT):
-	@make -C libft
-	
+
 clean:
-	@-make clean -C libft
-	@-rm -rf $(OBJECTS)
-	@-make clean -C mlx
-	@-make clean -C mlx_Linux
-
+		rm -f $(OBJ)
+		$(MAKE) clean -C mlx
 fclean: clean
-	@-rm -rf $(NAME)
-	@-make fclean -C libft
+		rm -f $(NAME)
+re:		fclean all
 
-re:	fclean all
+.PHONY:	all clean fclean re
 
-
-.PHONY:	clean fclean all re
